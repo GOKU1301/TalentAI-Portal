@@ -1,0 +1,59 @@
+<div class="login-container">
+  <div class="login-card">
+    <div class="login-header">
+      <h2>Smart Job Portal</h2>
+      <h3>Login</h3>
+    </div>
+
+    <div *ngIf="loginSuccess" class="success-alert">
+      {{ successMessage }}
+    </div>
+
+    <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input 
+          type="text" 
+          id="username" 
+          name="username"
+          [(ngModel)]="loginRequest.username" 
+          required 
+          #username="ngModel"
+          placeholder="Enter your username">
+        <div *ngIf="username.invalid && (username.dirty || username.touched)" class="error-message">
+          <div *ngIf="username.errors?.['required']">Username is required.</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input 
+          type="password" 
+          id="password" 
+          name="password"
+          [(ngModel)]="loginRequest.password" 
+          required
+          #password="ngModel"
+          placeholder="Enter your password">
+        <div *ngIf="password.invalid && (password.dirty || password.touched)" class="error-message">
+          <div *ngIf="password.errors?.['required']">Password is required.</div>
+        </div>
+      </div>
+
+      <div *ngIf="errorMessage" class="alert alert-danger">
+        {{ errorMessage }}
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" [disabled]="loginForm.invalid || isLoading" class="btn-login">
+          <span *ngIf="isLoading">Logging in...</span>
+          <span *ngIf="!isLoading">Login</span>
+        </button>
+      </div>
+
+      <div class="register-link">
+        Don't have an account? <a [routerLink]="['/register']">Register here</a>
+      </div>
+    </form>
+  </div>
+</div>

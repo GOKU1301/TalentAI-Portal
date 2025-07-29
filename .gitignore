@@ -1,0 +1,39 @@
+# --- Node/Angular ---
+node_modules/
+dist/
+.angular/cache/
+.env
+.env.*
+
+# --- Spring Boot/Java ---
+# Allow backend code but exclude build artifacts
+target/classes/application.properties
+*.log
+*.class
+# *.jar
+# *.war
+*.iml
+
+# --- Environment/Secrets ---
+application-*.properties
+.env
+backend/src/main/resources/application.properties
+
+
+# --- IDE/Editor ---
+.idea/
+.vscode/
+.classpath
+.project
+.settings/
+
+# --- OS/Other ---
+.DS_Store
+Thumbs.db
+
+# --- Misc ---
+*.swp
+*.swo
+
+# --- Public/Build Output (Angular) ---
+/frontend/public/

@@ -1,0 +1,127 @@
+<div class="register-container">
+  <div class="register-card">
+    <div class="register-header">
+      <h2>Smart Job Portal</h2>
+      <h3>Create an Account</h3>
+    </div>
+
+    <div *ngIf="registerSuccess" class="success-alert">
+      {{ successMessage }}
+    </div>
+
+    <form (ngSubmit)="onSubmit()" #registerForm="ngForm">
+      <div class="form-group">
+        <label for="fullName">Full Name</label>
+        <input 
+          type="text" 
+          id="fullName" 
+          name="fullName"
+          [(ngModel)]="registerRequest.fullName" 
+          required
+          #fullName="ngModel"
+          placeholder="Enter your full name">
+        <div *ngIf="fullName.invalid && (fullName.dirty || fullName.touched)" class="error-message">
+          <div *ngIf="fullName.errors?.['required']">Full name is required.</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input 
+          type="text" 
+          id="username" 
+          name="username"
+          [(ngModel)]="registerRequest.username" 
+          required
+          #username="ngModel"
+          placeholder="Enter your username">
+        <div *ngIf="username.invalid && (username.dirty || username.touched)" class="error-message">
+          <div *ngIf="username.errors?.['required']">Username is required.</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input 
+          type="email" 
+          id="email" 
+          name="email"
+          [(ngModel)]="registerRequest.email" 
+          required 
+          email
+          #email="ngModel"
+          placeholder="Enter your email">
+        <div *ngIf="email.invalid && (email.dirty || email.touched)" class="error-message">
+          <div *ngIf="email.errors?.['required']">Email is required.</div>
+          <div *ngIf="email.errors?.['email']">Please enter a valid email address.</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="role">I am a</label>
+        <div class="role-selector">
+          <div class="role-option" 
+               [class.selected]="registerRequest.role === 'JOBSEEKER'"
+               (click)="registerRequest.role = 'JOBSEEKER'">
+            Job Seeker
+          </div>
+          <div class="role-option" 
+               [class.selected]="registerRequest.role === 'RECRUITER'"
+               (click)="registerRequest.role = 'RECRUITER'">
+            Recruiter
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input 
+          type="password" 
+          id="password" 
+          name="password"
+          [(ngModel)]="registerRequest.password" 
+          required
+          minlength="6"
+          #password="ngModel"
+          placeholder="Enter your password">
+        <div *ngIf="password.invalid && (password.dirty || password.touched)" class="error-message">
+          <div *ngIf="password.errors?.['required']">Password is required.</div>
+          <div *ngIf="password.errors?.['minlength']">Password must be at least 6 characters.</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="confirmPassword">Confirm Password</label>
+        <input 
+          type="password" 
+          id="confirmPassword" 
+          name="confirmPassword"
+          [(ngModel)]="confirmPassword" 
+          required
+          #confirmPasswordField="ngModel"
+          placeholder="Confirm your password">
+        <div *ngIf="confirmPasswordField.dirty && registerRequest.password !== confirmPassword" class="error-message">
+          Passwords do not match.
+        </div>
+      </div>
+
+      <div *ngIf="errorMessage" class="alert alert-danger">
+        {{ errorMessage }}
+      </div>
+
+      <div class="form-actions">
+        <button 
+          type="submit" 
+          [disabled]="registerForm.invalid || isLoading || (registerRequest.password !== confirmPassword && confirmPassword)" 
+          class="btn-register">
+          <span *ngIf="isLoading">Registering...</span>
+          <span *ngIf="!isLoading">Register</span>
+        </button>
+      </div>
+
+      <div class="login-link">
+        Already have an account? <a [routerLink]="['/login']">Login here</a>
+      </div>
+    </form>
+  </div>
+</div>

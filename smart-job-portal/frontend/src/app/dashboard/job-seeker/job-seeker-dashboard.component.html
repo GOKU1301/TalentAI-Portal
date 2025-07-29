@@ -1,0 +1,187 @@
+<div class="dashboard-container">
+  <header class="dashboard-header">
+    <h1>Job Seeker Dashboard</h1>
+    <div class="user-info" *ngIf="currentUser">
+      <span>Welcome, {{currentUser.username}}!</span>
+      <button class="btn btn-danger" (click)="logout()">Logout</button>
+    </div>
+  </header>
+
+  <div class="loading-spinner" *ngIf="isLoading">
+    <div class="spinner"></div>
+    <p>Loading...</p>
+  </div>
+
+  <!-- Show error message if profile failed to load but we're not loading -->
+  <div class="error-message" *ngIf="!isLoading && !userProfile && profileLoadError">
+    <p>Unable to load profile data. Please check your connection and try again.</p>
+    <button class="btn btn-primary" (click)="loadUserProfile()">Retry</button>
+  </div>
+
+  <!-- Show dashboard content when not loading, regardless of userProfile status -->
+  <div class="dashboard-tabs" *ngIf="!isLoading">
+    <div class="tab-headers">
+      <button class="tab-btn" [class.active]="activeTab === 'profile-tab'" (click)="switchTab('profile-tab')">Profile</button>
+      <button class="tab-btn" [class.active]="activeTab === 'skills-tab'" (click)="switchTab('skills-tab')">Skills</button>
+      <button class="tab-btn" [class.active]="activeTab === 'matching-jobs-tab'" (click)="switchTab('matching-jobs-tab')">Matching Jobs</button>
+      <button class="tab-btn" [class.active]="activeTab === 'my-applications-tab'" (click)="switchTab('my-applications-tab')">My Applications</button>
+    </div>
+
+    <div id="profile-tab" class="tab-content" [class.active]="activeTab === 'profile-tab'">
+      <div class="card profile-card">
+        <div class="card-header">
+          <h2>My Profile</h2>
+          <button class="btn btn-edit" (click)="toggleEditProfile()" *ngIf="!isEditingProfile && userProfile">
+            <span class="edit-icon">✎</span> Edit
+          </button>
+        </div>
+        
+        <div class="card-body">
+          <!-- Show loading message if no profile data -->
+          <div *ngIf="!userProfile" class="profile-loading">
+            <p>Loading profile data...</p>
+            <button class="btn btn-primary" (click)="loadUserProfile()">Reload</button>
+          </div>
+          
+          <!-- Show profile details when data is available -->
+          <div *ngIf="userProfile && !isEditingProfile" class="profile-info">
+            <div class="info-item">
+              <h4>Full Name</h4>
+              <p>{{ userProfile.fullName || 'Not specified' }}</p>
+            </div>
+            <div class="info-item">
+              <h4>Email</h4>
+              <p>{{ userProfile.email }}</p>
+            </div>
+            <div class="info-item">
+              <h4>Education</h4>
+              <p>{{ userProfile.education || 'Not specified' }}</p>
+            </div>
+            <div class="info-item">
+              <h4>Experience (years)</h4>
+              <p>{{ userProfile.experience !== null && userProfile.experience !== undefined ? userProfile.experience : 'Not specified' }}</p>
+            </div>
+            <div class="info-item">
+              <h4>Current Position</h4>
+              <p>{{ userProfile.position || 'Not specified' }}</p>
+            </div>
+          </div>
+
+          <form [formGroup]="profileForm" *ngIf="isEditingProfile && userProfile" (ngSubmit)="updateProfile()">
+            <div class="form-group">
+              <label for="fullName">Full Name</label>
+              <input type="text" id="fullName" class="form-control" formControlName="fullName" required>
+              <div class="error-message" *ngIf="profileForm.get('fullName')?.hasError('required') && profileForm.get('fullName')?.touched">
+                Full name is required
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input type="email" id="email" class="form-control" formControlName="email" required>
+              <div class="error-message" *ngIf="profileForm.get('email')?.hasError('required') && profileForm.get('email')?.touched">
+                Email is required
+              </div>
+              <div class="error-message" *ngIf="profileForm.get('email')?.hasError('email') && profileForm.get('email')?.touched">
+                Please enter a valid email
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="education">Education</label>
+              <input type="text" id="education" class="form-control" formControlName="education">
+            </div>
+
+            <div class="form-group">
+              <label for="experience">Experience (years)</label>
+              <input type="number" id="experience" class="form-control" formControlName="experience" min="0">
+            </div>
+
+            <div class="form-group">
+              <label for="position">Current Position</label>
+              <input type="text" id="position" class="form-control" formControlName="position">
+            </div>
+
+            <div class="form-actions">
+              <button type="button" class="btn btn-secondary" (click)="toggleEditProfile()">Cancel</button>
+              <button type="submit" class="btn btn-primary" [disabled]="profileForm.invalid">
+                Save Changes
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div id="skills-tab" class="tab-content" [class.active]="activeTab === 'skills-tab'">
+      <div class="card skills-card">
+        <div class="card-header">
+          <h2>My Skills</h2>
+          <button class="btn btn-edit" (click)="toggleEditSkills()" *ngIf="!isEditingSkills && userProfile">
+            <span class="edit-icon">✎</span> Edit
+          </button>
+        </div>
+        
+        <div class="card-body">
+          <!-- Show loading message if no profile data -->
+          <div *ngIf="!userProfile" class="skills-loading">
+            <p>Loading skills data...</p>
+            <button class="btn btn-primary" (click)="loadUserProfile()">Reload</button>
+          </div>
+          
+          <div *ngIf="!isEditingSkills && userProfile" class="skills-list">
+            <div *ngIf="skillsArray && skillsArray.length > 0" class="skills-container">
+              <span *ngFor="let skill of skillsArray" class="skill-tag">
+                {{ skill }}
+              </span>
+            </div>
+            <p *ngIf="!skillsArray || skillsArray.length === 0" class="no-skills">
+              No skills added yet. Click the edit button to add your skills.
+            </p>
+          </div>
+          <div *ngIf="isEditingSkills && userProfile" class="edit-skills">
+            <div class="add-skill-form">
+              <div class="form-group skill-input">
+                <label for="newSkill">Add Skill</label>
+                <div class="input-group">
+                  <input type="text" id="newSkill" class="form-control" [(ngModel)]="newSkill" (keyup.enter)="addSkill()">
+                  <button class="btn btn-primary" (click)="addSkill()">
+                    Add
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="skills-list">
+              <div class="skill-chips">
+                <span class="skill-chip" *ngFor="let skill of skillsArray">
+                  {{skill}}
+                  <button class="remove-skill" (click)="removeSkill(skill)">×</button>
+                </span>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="button" class="btn btn-secondary" (click)="toggleEditSkills()">Cancel</button>
+              <button class="btn btn-primary" (click)="updateSkills()">
+                Save Skills
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Matching Jobs Tab -->
+    <div id="matching-jobs-tab" class="tab-content" [class.active]="activeTab === 'matching-jobs-tab'">
+      <app-matching-jobs></app-matching-jobs>
+    </div>
+
+    <!-- My Applications Tab -->
+    <div id="my-applications-tab" class="tab-content" [class.active]="activeTab === 'my-applications-tab'">
+      <app-my-applications></app-my-applications>
+    </div>
+  </div>
+</div>
+
+
