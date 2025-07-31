@@ -33,11 +33,11 @@ public class Job {
     
     private BigDecimal salary;
     
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = com.soprasteria.smartjobportal.converter.EmploymentTypeConverter.class)
     @Column(name = "employment_type")
     private EmploymentType employmentType = EmploymentType.FULLTIME;
     
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = com.soprasteria.smartjobportal.converter.ExperienceLevelConverter.class)
     @Column(name = "experience_level")
     private ExperienceLevel experienceLevel = ExperienceLevel.ENTRY;
     

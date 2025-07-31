@@ -118,34 +118,91 @@ public class JobService {
     }
 
     public List<JobResponse> getMatchingJobs() {
-        User currentUser = getCurrentUser();
-        String userSkills = currentUser.getSkills();
-        
-        if (userSkills == null || userSkills.trim().isEmpty()) {
-            return Collections.emptyList();
-        }
-        
-        List<Job> allJobs = jobRepository.findAll();
-        List<JobResponse> matchingJobs = new ArrayList<>();
-        
-        // Simple matching algorithm based on skill overlap
-        for (Job job : allJobs) {
-            if (job.getSkills() != null && !job.getSkills().isEmpty()) {
-                BigDecimal matchPercentage = calculateMatchPercentage(userSkills, job.getSkills());
-                
-                if (matchPercentage.compareTo(BigDecimal.ZERO) > 0) {
-                    JobResponse response = JobResponse.fromEntity(job);
-                    response.setMatchPercentage(matchPercentage);
-                    response.setApplied(applicationRepository.existsByJobAndUser(job, currentUser));
-                    matchingJobs.add(response);
+        try {
+            System.out.println("Starting getMatchingJobs method");
+            
+            // Get current user
+            User currentUser = null;
+            try {
+                currentUser = getCurrentUser();
+                System.out.println("Current user retrieved: " + currentUser.getUsername());
+            } catch (Exception e) {
+                System.err.println("Error getting current user: " + e.getMessage());
+                e.printStackTrace();
+                throw e;
+            }
+            
+            // Get user skills
+            String userSkills = null;
+            try {
+                userSkills = currentUser.getSkills();
+                System.out.println("User skills: " + (userSkills != null ? userSkills : "null"));
+            } catch (Exception e) {
+                System.err.println("Error getting user skills: " + e.getMessage());
+                e.printStackTrace();
+                throw e;
+            }
+            
+            if (userSkills == null || userSkills.trim().isEmpty()) {
+                System.out.println("No user skills found, returning empty list");
+                return Collections.emptyList();
+            }
+            
+            // Get all jobs
+            List<Job> allJobs = null;
+            try {
+                allJobs = jobRepository.findAll();
+                System.out.println("Retrieved " + allJobs.size() + " jobs");
+            } catch (Exception e) {
+                System.err.println("Error retrieving jobs: " + e.getMessage());
+                e.printStackTrace();
+                throw e;
+            }
+            
+            List<JobResponse> matchingJobs = new ArrayList<>();
+            
+            // Simple matching algorithm based on skill overlap
+            for (Job job : allJobs) {
+                try {
+                    if (job.getSkills() != null && !job.getSkills().isEmpty()) {
+                        System.out.println("Processing job ID: " + job.getId() + ", skills: " + job.getSkills());
+                        BigDecimal matchPercentage = calculateMatchPercentage(userSkills, job.getSkills());
+                        System.out.println("Match percentage: " + matchPercentage);
+                        
+                        if (matchPercentage.compareTo(BigDecimal.ZERO) > 0) {
+                            JobResponse response = JobResponse.fromEntity(job);
+                            response.setMatchPercentage(matchPercentage);
+                            
+                            boolean applied = false;
+                            try {
+                                applied = applicationRepository.existsByJobAndUser(job, currentUser);
+                                System.out.println("User has applied: " + applied);
+                            } catch (Exception e) {
+                                System.err.println("Error checking if user applied: " + e.getMessage());
+                                e.printStackTrace();
+                            }
+                            
+                            response.setApplied(applied);
+                            matchingJobs.add(response);
+                        }
+                    }
+                } catch (Exception e) {
+                    System.err.println("Error processing job ID " + job.getId() + ": " + e.getMessage());
+                    e.printStackTrace();
+                    // Continue processing other jobs
                 }
             }
+            
+            // Sort by match percentage (descending)
+            matchingJobs.sort((j1, j2) -> j2.getMatchPercentage().compareTo(j1.getMatchPercentage()));
+            
+            System.out.println("Returning " + matchingJobs.size() + " matching jobs");
+            return matchingJobs;
+        } catch (Exception e) {
+            System.err.println("Unhandled exception in getMatchingJobs: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
         }
-        
-        // Sort by match percentage (descending)
-        matchingJobs.sort((j1, j2) -> j2.getMatchPercentage().compareTo(j1.getMatchPercentage()));
-        
-        return matchingJobs;
     }
 
     private BigDecimal calculateMatchPercentage(String userSkills, String jobSkills) {

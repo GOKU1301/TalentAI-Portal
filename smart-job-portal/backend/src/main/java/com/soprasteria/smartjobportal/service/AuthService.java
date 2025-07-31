@@ -11,6 +11,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -24,25 +25,50 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
 
     public JwtResponse login(LoginRequest loginRequest) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        loginRequest.getUsername(),
-                        loginRequest.getPassword()
-                )
-        );
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        String jwt = jwtTokenProvider.generateToken(authentication.getPrincipal());
-
-        User user = userRepository.findByUsername(loginRequest.getUsername())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        return JwtResponse.builder()
-                .token(jwt)
-                .username(user.getUsername())
-                .email(user.getEmail())
-                .role(user.getRole().name())
-                .build();
+        try {
+            System.out.println("Attempting to authenticate user: " + loginRequest.getUsername());
+            
+            // Check if user exists in database
+            User userCheck = userRepository.findByUsername(loginRequest.getUsername())
+                    .orElse(null);
+            
+            if (userCheck == null) {
+                System.out.println("User not found in database: " + loginRequest.getUsername());
+                throw new RuntimeException("User not found");
+            }
+            
+            System.out.println("User found in database: " + userCheck.getUsername());
+            System.out.println("Stored password hash length: " + userCheck.getPassword().length());
+            
+            // Attempt authentication
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            loginRequest.getUsername(),
+                            loginRequest.getPassword()
+                    )
+            );
+            
+            System.out.println("Authentication successful for user: " + loginRequest.getUsername());
+            
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            String jwt = jwtTokenProvider.generateToken((UserDetails) authentication.getPrincipal());
+            
+            System.out.println("JWT token generated successfully");
+            
+            User user = userRepository.findByUsername(loginRequest.getUsername())
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+            
+            return JwtResponse.builder()
+                    .token(jwt)
+                    .username(user.getUsername())
+                    .email(user.getEmail())
+                    .role(user.getRole().name())
+                    .build();
+        } catch (Exception e) {
+            System.out.println("Login error: " + e.getClass().getName() + ": " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
     }
 
     public JwtResponse register(RegisterRequest registerRequest) {
@@ -84,7 +110,7 @@ public class AuthService {
         );
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        String jwt = jwtTokenProvider.generateToken(authentication.getPrincipal());
+        String jwt = jwtTokenProvider.generateToken((UserDetails) authentication.getPrincipal());
 
         return JwtResponse.builder()
                 .token(jwt)
