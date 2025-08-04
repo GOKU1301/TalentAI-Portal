@@ -27,7 +27,30 @@ export const jobSeekerGuard: CanActivateFn = (route, state) => {
   if (currentUser.role !== 'JOBSEEKER') {
     // Redirect to appropriate dashboard based on role
     if (currentUser.role === 'RECRUITER') {
-      router.navigate(['/recruiter-dashboard']);
+      router.navigate(['/dashboard/recruiter']);
+    } else {
+      router.navigate(['/login']);
+    }
+    return false;
+  }
+  
+  return true;
+};
+
+export const recruiterGuard: CanActivateFn = (route, state) => {
+  const authService = inject(AuthService);
+  const router = inject(Router);
+  const currentUser = authService.getCurrentUser();
+  
+  if (!authService.isLoggedIn() || !currentUser) {
+    router.navigate(['/login']);
+    return false;
+  }
+  
+  if (currentUser.role !== 'RECRUITER' && currentUser.role !== 'ADMIN') {
+    // Redirect to appropriate dashboard based on role
+    if (currentUser.role === 'JOBSEEKER') {
+      router.navigate(['/job-seeker-dashboard']);
     } else {
       router.navigate(['/login']);
     }

@@ -2,6 +2,7 @@ package com.soprasteria.smartjobportal.service;
 
 import com.soprasteria.smartjobportal.dto.ApplicationDTO.ApplicationRequest;
 import com.soprasteria.smartjobportal.dto.ApplicationDTO.ApplicationResponse;
+import com.soprasteria.smartjobportal.dto.ApplicationDTO.StatusUpdateRequest;
 import com.soprasteria.smartjobportal.model.Application;
 import com.soprasteria.smartjobportal.model.Job;
 import com.soprasteria.smartjobportal.model.User;
@@ -124,6 +125,27 @@ public class ApplicationService {
         return BigDecimal.valueOf(percentage).setScale(2, BigDecimal.ROUND_HALF_UP);
     }
 
+    public ApplicationResponse updateApplicationStatus(Integer applicationId, StatusUpdateRequest statusUpdateRequest) {
+        User currentUser = getCurrentUser();
+        
+        Application application = applicationRepository.findById(applicationId)
+                .orElseThrow(() -> new RuntimeException("Application not found with id: " + applicationId));
+        
+        Job job = application.getJob();
+        
+        // Verify that the current user is the recruiter who posted the job
+        if (!job.getPostedBy().getId().equals(currentUser.getId()) && 
+            currentUser.getRole() != User.Role.ADMIN) {
+            throw new AccessDeniedException("You don't have permission to update this application's status");
+        }
+        
+        // Update the status
+        application.setStatus(statusUpdateRequest.getStatus());
+        Application updatedApplication = applicationRepository.save(application);
+        
+        return ApplicationResponse.fromEntity(updatedApplication);
+    }
+    
     private User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();

@@ -1,0 +1,93 @@
+<div class="manage-applications">
+  <header class="page-header">
+    <div class="header-content">
+      <button class="btn btn-secondary" [routerLink]="['/dashboard/recruiter']">
+        <i class="fas fa-arrow-left"></i> Back to Dashboard
+      </button>
+      <h1 *ngIf="job">Applications for {{ job.title }}</h1>
+      <h1 *ngIf="!job">Job Applications</h1>
+    </div>
+  </header>
+
+  <!-- Loading State -->
+  <div class="loading-container" *ngIf="loading">
+    <div class="spinner">
+      <i class="fas fa-spinner fa-spin"></i>
+    </div>
+    <p>Loading applications...</p>
+  </div>
+
+  <!-- Error Message -->
+  <div class="alert alert-danger" *ngIf="error">
+    <i class="fas fa-exclamation-circle"></i>
+    <span>{{ error }}</span>
+  </div>
+
+  <!-- Success Message -->
+  <div class="alert alert-success" *ngIf="updateSuccess">
+    <i class="fas fa-check-circle"></i>
+    <span>{{ updateSuccess }}</span>
+  </div>
+
+  <!-- No Applications State -->
+  <div class="empty-state" *ngIf="!loading && applications.length === 0 && !error">
+    <i class="fas fa-file-alt empty-icon"></i>
+    <h3>No Applications Yet</h3>
+    <p>There are no applications for this job posting yet.</p>
+  </div>
+
+  <!-- Applications List -->
+  <div class="applications-container" *ngIf="!loading && applications.length > 0">
+    <h2>All Applications ({{ applications.length }})</h2>
+    
+    <div class="applications-list">
+      <div class="application-card" *ngFor="let application of applications">
+        <div class="application-header">
+          <div class="applicant-info">
+            <h3>{{ application.job.postedByName }}</h3>
+            <span class="application-date">Applied on {{ application.appliedDate }}</span>
+          </div>
+          <div class="application-status" [ngClass]="application.status.toLowerCase()">
+            {{ application.status }}
+          </div>
+        </div>
+        
+        <div class="application-body">
+          <div class="match-percentage" *ngIf="application.matchPercentage">
+            <div class="match-label">Match</div>
+            <div class="match-value">{{ application.matchPercentage }}%</div>
+          </div>
+          
+          <div class="cover-letter">
+            <h4>Cover Letter</h4>
+            <p>{{ application.coverLetter }}</p>
+          </div>
+        </div>
+        
+        <div class="application-actions">
+          <h4>Update Application Status:</h4>
+          <div class="action-buttons">
+            <button 
+              class="btn btn-success" 
+              [disabled]="application.status === applicationStatus.ACCEPTED"
+              (click)="updateStatus(application, applicationStatus.ACCEPTED)">
+              <i class="fas fa-check"></i> Accept
+            </button>
+            <button 
+              class="btn btn-danger" 
+              [disabled]="application.status === applicationStatus.REJECTED"
+              (click)="updateStatus(application, applicationStatus.REJECTED)">
+              <i class="fas fa-times"></i> Reject
+            </button>
+            <button 
+              class="btn btn-secondary" 
+              [disabled]="application.status === applicationStatus.PENDING"
+              (click)="updateStatus(application, applicationStatus.PENDING)">
+              <i class="fas fa-clock"></i> Mark as Pending
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

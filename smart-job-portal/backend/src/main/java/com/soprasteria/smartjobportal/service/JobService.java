@@ -260,4 +260,43 @@ public class JobService {
             return Optional.empty();
         }
     }
+    
+    public List<JobResponse> getJobsPostedByCurrentUser() {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication == null) {
+                System.err.println("Authentication is null in getJobsPostedByCurrentUser");
+                throw new RuntimeException("User not authenticated");
+            }
+            
+            String username = authentication.getName();
+            if (username == null || username.isEmpty() || username.equals("anonymousUser")) {
+                System.err.println("Invalid username in getJobsPostedByCurrentUser: " + username);
+                throw new RuntimeException("Invalid username");
+            }
+            
+            User currentUser = userRepository.findByUsername(username)
+                    .orElseThrow(() -> {
+                        System.err.println("User not found with username: " + username);
+                        return new UsernameNotFoundException("User not found with username: " + username);
+                    });
+            
+            System.out.println("Found user: " + currentUser.getUsername() + " with role: " + currentUser.getRole());
+            
+            List<Job> jobs = jobRepository.findByPostedBy(currentUser);
+            System.out.println("Found " + jobs.size() + " jobs posted by user: " + currentUser.getUsername());
+            
+            return jobs.stream()
+                    .map(job -> {
+                        JobResponse response = JobResponse.fromEntity(job);
+                        response.setApplied(false); // Not applicable for recruiters viewing their own jobs
+                        return response;
+                    })
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            System.err.println("Error in getJobsPostedByCurrentUser: " + e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException("Failed to retrieve jobs: " + e.getMessage(), e);
+        }
+    }
 }

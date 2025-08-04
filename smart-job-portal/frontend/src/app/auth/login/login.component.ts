@@ -44,9 +44,10 @@ export class LoginComponent {
             setTimeout(() => {
               this.router.navigate(['/job-seeker-dashboard']);
             }, 1000); // Short delay to show success message
-          } else if (currentUser.role === 'RECRUITER') {
-            // For future implementation
-            // this.router.navigate(['/recruiter-dashboard']);
+          } else if (currentUser.role === 'RECRUITER' || currentUser.role === 'ADMIN') {
+            setTimeout(() => {
+              this.router.navigate(['/dashboard/recruiter']);
+            }, 1000); // Short delay to show success message
           }
         }
       },

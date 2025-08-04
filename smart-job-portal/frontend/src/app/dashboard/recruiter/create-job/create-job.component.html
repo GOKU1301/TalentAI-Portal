@@ -1,0 +1,244 @@
+<div class="create-job-container">
+  <div class="page-header">
+    <div class="header-content">
+      <h1>
+        <i class="fas fa-plus-circle"></i>
+        Create New Job Posting
+      </h1>
+      <p class="subtitle">Fill in the details below to create a new job posting</p>
+    </div>
+    <button class="btn btn-outline" [routerLink]="['/dashboard/recruiter']">
+      <i class="fas fa-arrow-left"></i> Back to Dashboard
+    </button>
+  </div>
+
+  <div class="alert alert-success" *ngIf="success">
+    <i class="fas fa-check-circle"></i>
+    <div class="alert-content">
+      <h4>Success!</h4>
+      <p>Job posting created successfully! Redirecting to dashboard...</p>
+    </div>
+  </div>
+
+  <div class="alert alert-danger" *ngIf="error">
+    <i class="fas fa-exclamation-circle"></i>
+    <div class="alert-content">
+      <h4>Error</h4>
+      <p>{{ error }}</p>
+    </div>
+  </div>
+
+  <div class="form-container">
+    <div class="form-sidebar">
+      <div class="form-progress">
+        <div class="progress-step completed">
+          <div class="step-indicator">1</div>
+          <div class="step-label">Basic Info</div>
+        </div>
+        <div class="progress-step active">
+          <div class="step-indicator">2</div>
+          <div class="step-label">Job Details</div>
+        </div>
+        <div class="progress-step">
+          <div class="step-indicator">3</div>
+          <div class="step-label">Review & Submit</div>
+        </div>
+      </div>
+      
+      <div class="form-tips">
+        <h3><i class="fas fa-lightbulb"></i> Tips</h3>
+        <ul>
+          <li>Be specific with job titles to attract the right candidates</li>
+          <li>Include salary information to increase application rates</li>
+          <li>List all required skills to help with candidate matching</li>
+          <li>Provide a detailed job description with responsibilities and benefits</li>
+        </ul>
+      </div>
+    </div>
+    
+    <form [formGroup]="jobForm" (ngSubmit)="onSubmit()" class="job-form">
+      <div class="form-section">
+        <h2 class="section-title">Basic Information</h2>
+        
+        <div class="form-group">
+          <label for="title">
+            <i class="fas fa-briefcase"></i> Job Title*
+          </label>
+          <input 
+            type="text" 
+            id="title" 
+            formControlName="title" 
+            class="form-control" 
+            placeholder="e.g. Senior Software Engineer"
+            [class.is-invalid]="jobForm.get('title')?.invalid && jobForm.get('title')?.touched"
+          >
+          <div class="invalid-feedback" *ngIf="jobForm.get('title')?.invalid && jobForm.get('title')?.touched">
+            <span *ngIf="jobForm.get('title')?.errors?.['required']">Job title is required</span>
+            <span *ngIf="jobForm.get('title')?.errors?.['minlength']">Job title must be at least 5 characters</span>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group form-group-half">
+            <label for="company">
+              <i class="fas fa-building"></i> Company*
+            </label>
+            <input 
+              type="text" 
+              id="company" 
+              formControlName="company" 
+              class="form-control"
+              placeholder="Your company name"
+              [class.is-invalid]="jobForm.get('company')?.invalid && jobForm.get('company')?.touched"
+            >
+            <div class="invalid-feedback" *ngIf="jobForm.get('company')?.invalid && jobForm.get('company')?.touched">
+              Company name is required
+            </div>
+          </div>
+
+          <div class="form-group form-group-half">
+            <label for="location">
+              <i class="fas fa-map-marker-alt"></i> Location*
+            </label>
+            <input 
+              type="text" 
+              id="location" 
+              formControlName="location" 
+              class="form-control"
+              placeholder="City, State or Remote"
+              [class.is-invalid]="jobForm.get('location')?.invalid && jobForm.get('location')?.touched"
+            >
+            <div class="invalid-feedback" *ngIf="jobForm.get('location')?.invalid && jobForm.get('location')?.touched">
+              Location is required
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="form-section">
+        <h2 class="section-title">Job Details</h2>
+        
+        <div class="form-row">
+          <div class="form-group form-group-third">
+            <label for="salary">
+              <i class="fas fa-money-bill-wave"></i> Salary*
+            </label>
+            <div class="input-with-icon">
+              <span class="input-icon">$</span>
+              <input 
+                type="number" 
+                id="salary" 
+                formControlName="salary" 
+                class="form-control"
+                placeholder="Annual salary"
+                [class.is-invalid]="jobForm.get('salary')?.invalid && jobForm.get('salary')?.touched"
+              >
+            </div>
+            <div class="invalid-feedback" *ngIf="jobForm.get('salary')?.invalid && jobForm.get('salary')?.touched">
+              <span *ngIf="jobForm.get('salary')?.errors?.['required']">Salary is required</span>
+              <span *ngIf="jobForm.get('salary')?.errors?.['min']">Salary must be a positive number</span>
+            </div>
+          </div>
+
+          <div class="form-group form-group-third">
+            <label for="employmentType">
+              <i class="fas fa-clock"></i> Employment Type*
+            </label>
+            <select 
+              id="employmentType" 
+              formControlName="employmentType" 
+              class="form-control"
+              [class.is-invalid]="jobForm.get('employmentType')?.invalid && jobForm.get('employmentType')?.touched"
+            >
+              <option value="" disabled selected>Select type</option>
+              <option *ngFor="let type of employmentTypes" [value]="type.value">{{ type.label }}</option>
+            </select>
+            <div class="invalid-feedback" *ngIf="jobForm.get('employmentType')?.invalid && jobForm.get('employmentType')?.touched">
+              Employment type is required
+            </div>
+          </div>
+
+          <div class="form-group form-group-third">
+            <label for="experienceLevel">
+              <i class="fas fa-layer-group"></i> Experience Level*
+            </label>
+            <select 
+              id="experienceLevel" 
+              formControlName="experienceLevel" 
+              class="form-control"
+              [class.is-invalid]="jobForm.get('experienceLevel')?.invalid && jobForm.get('experienceLevel')?.touched"
+            >
+              <option value="" disabled selected>Select level</option>
+              <option *ngFor="let level of experienceLevels" [value]="level.value">{{ level.label }}</option>
+            </select>
+            <div class="invalid-feedback" *ngIf="jobForm.get('experienceLevel')?.invalid && jobForm.get('experienceLevel')?.touched">
+              Experience level is required
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="skills">
+            <i class="fas fa-tools"></i> Required Skills*
+          </label>
+          <div class="skills-input-container">
+            <input 
+              type="text" 
+              id="skills" 
+              formControlName="skills" 
+              class="form-control"
+              placeholder="e.g. Java, Spring Boot, Angular (comma-separated)"
+              [class.is-invalid]="jobForm.get('skills')?.invalid && jobForm.get('skills')?.touched"
+            >
+            <div class="skills-preview" *ngIf="jobForm.get('skills')?.value">
+              <span class="skill-tag" *ngFor="let skill of jobForm.get('skills')?.value.split(',')">
+                {{ skill.trim() }}
+              </span>
+            </div>
+          </div>
+          <div class="invalid-feedback" *ngIf="jobForm.get('skills')?.invalid && jobForm.get('skills')?.touched">
+            Skills are required
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="description">
+            <i class="fas fa-file-alt"></i> Job Description*
+          </label>
+          <div class="rich-text-toolbar">
+            <button type="button" class="toolbar-btn" title="Bold"><i class="fas fa-bold"></i></button>
+            <button type="button" class="toolbar-btn" title="Italic"><i class="fas fa-italic"></i></button>
+            <button type="button" class="toolbar-btn" title="Bullet List"><i class="fas fa-list-ul"></i></button>
+            <button type="button" class="toolbar-btn" title="Numbered List"><i class="fas fa-list-ol"></i></button>
+          </div>
+          <textarea 
+            id="description" 
+            formControlName="description" 
+            class="form-control rich-text-editor" 
+            rows="8"
+            placeholder="Describe the job responsibilities, requirements, benefits, and any other relevant information..."
+            [class.is-invalid]="jobForm.get('description')?.invalid && jobForm.get('description')?.touched"
+          ></textarea>
+          <div class="text-count" [class.text-danger]="jobForm.get('description')?.value?.length < 20">
+            {{ jobForm.get('description')?.value?.length || 0 }} / 2000 characters
+          </div>
+          <div class="invalid-feedback" *ngIf="jobForm.get('description')?.invalid && jobForm.get('description')?.touched">
+            <span *ngIf="jobForm.get('description')?.errors?.['required']">Job description is required</span>
+            <span *ngIf="jobForm.get('description')?.errors?.['minlength']">Job description must be at least 20 characters</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn btn-outline" [routerLink]="['/dashboard/recruiter']">
+          Cancel
+        </button>
+        <button type="submit" class="btn btn-primary" [disabled]="jobForm.invalid || loading">
+          <i class="fas fa-spinner fa-spin" *ngIf="loading"></i>
+          <span *ngIf="loading">Creating...</span>
+          <span *ngIf="!loading"><i class="fas fa-check-circle"></i> Create Job</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

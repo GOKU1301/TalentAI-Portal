@@ -1,6 +1,7 @@
 package com.soprasteria.smartjobportal.dto;
 
 import com.soprasteria.smartjobportal.model.Application;
+import com.soprasteria.smartjobportal.model.Application.ApplicationStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,6 +21,14 @@ public class ApplicationDTO {
     @NoArgsConstructor
     public static class ApplicationRequest {
         private String coverLetter;
+    }
+    
+    @Data
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class StatusUpdateRequest {
+        private ApplicationStatus status;
     }
 
     @Data

@@ -37,3 +37,4 @@ Thumbs.db
 
 # --- Public/Build Output (Angular) ---
 /frontend/public/
+target/

@@ -48,4 +48,11 @@ public class JobController {
         List<JobResponse> matchingJobs = jobService.getMatchingJobs();
         return ResponseEntity.ok(matchingJobs);
     }
+    
+    @GetMapping("/my-posted-jobs")
+    @PreAuthorize("hasRole('RECRUITER') or hasRole('ADMIN')")
+    public ResponseEntity<List<JobResponse>> getMyPostedJobs() {
+        List<JobResponse> myJobs = jobService.getJobsPostedByCurrentUser();
+        return ResponseEntity.ok(myJobs);
+    }
 }
