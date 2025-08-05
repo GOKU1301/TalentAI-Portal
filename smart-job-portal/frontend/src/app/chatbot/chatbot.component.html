@@ -1,0 +1,38 @@
+<!-- Floating chat button -->
+<div class="chat-button" [class.open]="isChatOpen" (click)="toggleChat()">
+  <i class="material-icons">{{ isChatOpen ? 'close' : 'chat' }}</i>
+</div>
+
+<!-- Chat window -->
+<div class="chat-window" [class.open]="isChatOpen">
+  <div class="chat-header">
+    <h3>Job Assistant</h3>
+  </div>
+  
+  <div class="chat-messages">
+    <div *ngFor="let chat of chatHistory" class="message" [class.user-message]="chat.sender === 'user'" [class.bot-message]="chat.sender === 'bot'">
+      <div class="message-content">
+        {{ chat.message }}
+      </div>
+    </div>
+    <div *ngIf="isLoading" class="message bot-message">
+      <div class="message-content typing">
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+      </div>
+    </div>
+  </div>
+  
+  <div class="chat-input">
+    <input 
+      type="text" 
+      [(ngModel)]="userMessage" 
+      placeholder="Ask about job search, interviews, etc..." 
+      (keyup.enter)="sendMessage()"
+    >
+    <button (click)="sendMessage()" [disabled]="isLoading || !userMessage.trim()">
+      <i class="material-icons">send</i>
+    </button>
+  </div>
+</div>
