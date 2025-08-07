@@ -1,5 +1,7 @@
 <div class="my-applications-container">
-  <h2>My Job Applications</h2>
+  <header class="page-header">
+    <h2><i class="fas fa-clipboard-list"></i> My Job Applications</h2>
+  </header>
   
   <div *ngIf="isLoading" class="loading-spinner">
     <div class="spinner"></div>
@@ -7,24 +9,28 @@
   </div>
   
   <div *ngIf="error" class="alert alert-danger">
+    <i class="fas fa-exclamation-circle"></i>
     <p>There was an error loading your applications. Please try again later.</p>
     <button class="btn btn-primary" (click)="loadMyApplications()">Retry</button>
   </div>
   
   <div *ngIf="!isLoading && !error && applications.length === 0" class="no-applications-message">
-    <p>You haven't applied to any jobs yet. Start exploring matching jobs to find opportunities!</p>
+    <i class="fas fa-clipboard-check"></i>
+    <h3>No Applications Yet</h3>
+    <p>You haven't applied to any jobs yet. Browse available jobs and submit your first application!</p>
+    <!-- <a class="btn btn-primary" [routerLink]="['/jobs']"><i class="fas fa-search"></i> Browse Jobs</a> -->
   </div>
   
   <div *ngIf="!isLoading && !error && applications.length > 0" class="applications-list">
     <table class="applications-table">
       <thead>
         <tr>
-          <th>Job Title</th>
-          <th>Company</th>
-          <th>Applied Date</th>
-          <th>Status</th>
-          <th>Match</th>
-          <th>Actions</th>
+          <th><i class="fas fa-briefcase"></i> Job Title</th>
+          <th><i class="fas fa-building"></i> Company</th>
+          <th><i class="fas fa-calendar-alt"></i> Applied Date</th>
+          <th><i class="fas fa-tasks"></i> Status</th>
+          <th><i class="fas fa-percentage"></i> Match</th>
+          <th><i class="fas fa-cogs"></i> Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -38,14 +44,17 @@
             </span>
           </td>
           <td>
-            <span *ngIf="application.matchPercentage">
-              {{ application.matchPercentage | number:'1.0-0' }}%
-            </span>
+            <div class="match-indicator" *ngIf="application.matchPercentage">
+              <div class="match-bar">
+                <div class="match-fill" [style.width.%]="application.matchPercentage"></div>
+              </div>
+              <span class="match-value">{{ application.matchPercentage | number:'1.0-0' }}%</span>
+            </div>
             <span *ngIf="!application.matchPercentage">-</span>
           </td>
           <td>
             <button class="btn btn-primary btn-sm" (click)="viewApplicationDetails(application)">
-              View Details
+              <i class="fas fa-eye"></i> View
             </button>
           </td>
         </tr>
@@ -57,12 +66,12 @@
   <div *ngIf="selectedApplication" class="application-details-modal">
     <div class="modal-content">
       <div class="modal-header">
-        <h3>Application Details</h3>
+        <h3><i class="fas fa-file-alt"></i> Application Details</h3>
         <button class="close-btn" (click)="closeApplicationDetails()">&times;</button>
       </div>
       <div class="modal-body">
         <div class="application-status-section">
-          <h4>Application Status</h4>
+          <h4><i class="fas fa-clipboard-check"></i> Application Status</h4>
           <span class="status-badge large" [ngClass]="getStatusBadgeClass(selectedApplication.status)">
             {{ selectedApplication.status }}
           </span>
@@ -70,32 +79,32 @@
         </div>
         
         <div class="job-detail-section">
-          <h4>Job Details</h4>
+          <h4><i class="fas fa-briefcase"></i> Job Details</h4>
           <h5>{{ selectedApplication.job.title }}</h5>
           <p class="company">{{ selectedApplication.job.company }}</p>
-          <p class="location">{{ selectedApplication.job.location }}</p>
+          <p class="location"><i class="fas fa-map-marker-alt"></i> {{ selectedApplication.job.location }}</p>
           
           <div class="job-info-grid">
             <div class="job-info-item">
-              <span class="label">Employment Type:</span>
+              <span class="label">Employment Type</span>
               <span class="value">{{ selectedApplication.job.employmentType }}</span>
             </div>
             <div class="job-info-item">
-              <span class="label">Experience Level:</span>
+              <span class="label">Experience Level</span>
               <span class="value">{{ selectedApplication.job.experienceLevel }}</span>
             </div>
             <div class="job-info-item">
-              <span class="label">Salary:</span>
+              <span class="label">Salary</span>
               <span class="value">{{ selectedApplication.job.salary }}</span>
             </div>
             <div class="job-info-item">
-              <span class="label">Posted Date:</span>
+              <span class="label">Posted Date</span>
               <span class="value">{{ formatDate(selectedApplication.job.postedDate) }}</span>
             </div>
           </div>
           
           <div class="skills-section">
-            <h5>Required Skills</h5>
+            <h5><i class="fas fa-tools"></i> Required Skills</h5>
             <div class="skills-container">
               <span *ngFor="let skill of formatSkills(selectedApplication.job.skills)" class="skill-tag">
                 {{ skill }}
@@ -104,26 +113,30 @@
           </div>
           
           <div class="description-section">
-            <h5>Job Description</h5>
+            <h5><i class="fas fa-align-left"></i> Job Description</h5>
             <p>{{ selectedApplication.job.description }}</p>
           </div>
         </div>
         
         <div *ngIf="selectedApplication.coverLetter" class="cover-letter-section">
-          <h4>Your Cover Letter</h4>
+          <h4><i class="fas fa-envelope-open-text"></i> Your Cover Letter</h4>
           <div class="cover-letter-content">
             {{ selectedApplication.coverLetter }}
           </div>
         </div>
         
         <div *ngIf="selectedApplication.matchPercentage" class="match-section">
-          <h4>Skills Match</h4>
+          <h4><i class="fas fa-chart-pie"></i> Skills Match</h4>
           <div class="match-percentage">
             <div class="progress-bar">
               <div class="progress" [style.width.%]="selectedApplication.matchPercentage"></div>
             </div>
             <span class="percentage">{{ selectedApplication.matchPercentage | number:'1.0-0' }}%</span>
           </div>
+        </div>
+        
+        <div class="modal-actions">
+          <button class="btn btn-secondary" (click)="closeApplicationDetails()"><i class="fas fa-times"></i> Close</button>
         </div>
       </div>
     </div>

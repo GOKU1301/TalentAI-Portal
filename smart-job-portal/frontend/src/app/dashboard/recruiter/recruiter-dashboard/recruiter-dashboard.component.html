@@ -4,8 +4,11 @@
     <!-- Header -->
     <header class="dashboard-header">
       <div class="header-content">
-        <h1>Recruiter Dashboard</h1>
+        <h1><i class="fas fa-user-tie"></i> Recruiter Dashboard</h1>
         <p class="subtitle">Manage your job postings</p>
+        <div class="user-actions">
+          <button class="btn-logout" (click)="logout()">Logout</button>
+        </div>
       </div>
       <div class="header-actions">
         <button class="btn btn-primary" [routerLink]="['./create-job']"><i class="fas fa-plus-circle"></i> Create New Job</button>
@@ -28,7 +31,7 @@
     <!-- Job Listings -->
     <section class="job-listings">
       <div class="section-header">
-        <h2>Your Job Postings</h2>
+        <h2><i class="fas fa-clipboard-list"></i> Your Job Postings</h2>
       </div>
 
       <div class="loading" *ngIf="loading">
@@ -38,9 +41,10 @@
         <p>Loading jobs...</p>
       </div>
 
-      <div class="error-message" *ngIf="error">
+      <div class="error-message alert alert-danger" *ngIf="error">
         <i class="fas fa-exclamation-circle"></i>
         <p>{{ error }}</p>
+        <button class="btn btn-primary" (click)="loadJobs()"><i class="fas fa-sync"></i> Retry</button>
       </div>
 
       <div class="empty-state" *ngIf="!loading && !error && (!jobs || jobs.length === 0)">
@@ -57,14 +61,9 @@
           <div class="job-card-header">
             <h3>{{ job.title }}</h3>
             <div class="job-actions">
-              <button class="btn-icon" title="View Applications" [routerLink]="['./manage-applications', job.id]">
+              <button class="btn btn-secondary" [routerLink]="['./manage-applications', job.id]">
                 <i class="fas fa-users"></i>
-              </button>
-              <button class="btn-icon" title="Edit Job">
-                <i class="fas fa-edit"></i>
-              </button>
-              <button class="btn-icon" title="Delete Job">
-                <i class="fas fa-trash-alt"></i>
+                <span>View Applications</span>
               </button>
             </div>
           </div>

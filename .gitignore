@@ -18,7 +18,13 @@ target/classes/application.properties
 application-*.properties
 .env
 backend/src/main/resources/application.properties
-
+application.properties.new
+**/application-dev.properties
+**/application-prod.properties
+**/application-local.properties
+**/*.p12
+**/*.jks
+**/*.keystore
 
 # --- IDE/Editor ---
 .idea/
@@ -38,3 +44,17 @@ Thumbs.db
 # --- Public/Build Output (Angular) ---
 /frontend/public/
 target/
+
+# --- Deployment specific ---
+.vercel
+.netlify
+**/credentials.json
+**/service-account*.json
+**/gcp-key*.json
+**/*-secrets*.yaml
+**/*-secrets*.yml
+
+# --- Temp files ---
+*.tmp
+*~
+._*

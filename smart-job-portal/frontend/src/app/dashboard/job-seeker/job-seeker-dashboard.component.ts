@@ -93,7 +93,11 @@ export class JobSeekerDashboardComponent implements OnInit, AfterViewInit {
   }
   
   switchTab(tabId: string): void {
+    // First hide all tabs by removing active class
     this.activeTab = tabId;
+    
+    // Scroll to top when switching tabs for better UX
+    window.scrollTo(0, 0);
   }
 
   loadUserProfile(): void {

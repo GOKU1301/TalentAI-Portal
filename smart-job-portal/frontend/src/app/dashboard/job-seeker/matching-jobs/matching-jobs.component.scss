@@ -1,14 +1,25 @@
+@use 'sass:color';
+
 .matching-jobs-container {
   padding: 20px;
   max-width: 1200px;
   margin: 0 auto;
+  height: 100%;
 }
 
 h2 {
   margin-bottom: 20px;
-  color: #333;
-  border-bottom: 2px solid #007bff;
+  color: var(--primary-color);
   padding-bottom: 10px;
+  font-size: 1.5rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  
+  i {
+    font-size: 1.3rem;
+  }
 }
 
 .loading-spinner {
@@ -24,7 +35,7 @@ h2 {
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  border-left-color: #007bff;
+  border-left-color: var(--secondary-color);
   animation: spin 1s linear infinite;
   margin-bottom: 10px;
 }
@@ -75,10 +86,11 @@ h2 {
 .job-card {
   background-color: #fff;
   border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   padding: 20px;
   cursor: pointer;
   transition: transform 0.2s, box-shadow 0.2s;
+  border: 1px solid var(--border-color);
 }
 
 .job-card:hover {
@@ -107,19 +119,19 @@ h2 {
 }
 
 .match-badge {
-  background-color: #e3f2fd;
-  color: #0d47a1;
+  background-color: rgba(0, 161, 154, 0.2);
+  color: var(--secondary-color);
   padding: 3px 8px;
-  border-radius: 4px;
+  border-radius: 20px;
   font-size: 12px;
   font-weight: 600;
 }
 
 .applied-badge {
-  background-color: #e8f5e9;
-  color: #2e7d32;
+  background-color: rgba(26, 58, 110, 0.2);
+  color: var(--primary-color);
   padding: 3px 8px;
-  border-radius: 4px;
+  border-radius: 20px;
   font-size: 12px;
   font-weight: 600;
 }
@@ -143,11 +155,22 @@ h2 {
 }
 
 .skill-tag {
-  background-color: #e9ecef;
-  color: #495057;
-  padding: 3px 8px;
-  border-radius: 4px;
-  font-size: 12px;
+  background: linear-gradient(to right, rgba(0, 161, 154, 0.1), rgba(0, 161, 154, 0.2));
+  color: var(--secondary-color);
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
 }
 
 .job-footer {
@@ -179,15 +202,22 @@ h2 {
 
 .btn-primary {
   color: #fff;
-  background-color: #007bff;
-  border-color: #007bff;
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  
+  &:hover {
+    background-color: color.adjust(#1a3a6e, $lightness: -10%);
+    border-color: color.adjust(#1a3a6e, $lightness: -10%);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  &:focus {
+    box-shadow: 0 0 0 3px rgba(26, 58, 110, 0.3);
+    outline: none;
+  }
 }
 
-.btn-primary:hover {
-  color: #fff;
-  background-color: #0069d9;
-  border-color: #0062cc;
-}
+
 
 .btn-sm {
   padding: 0.25rem 0.5rem;
@@ -224,13 +254,18 @@ h2 {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px 20px;
-  border-bottom: 1px solid #e9ecef;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-color);
+  background-color: var(--primary-color);
+  color: white;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
 }
 
 .modal-header h3 {
   margin: 0;
-  color: #333;
+  color: white;
+  font-weight: 600;
 }
 
 .close-btn {
@@ -238,12 +273,14 @@ h2 {
   border: none;
   font-size: 24px;
   cursor: pointer;
-  color: #6c757d;
+  color: rgba(255, 255, 255, 0.8);
+  
+  &:hover {
+    color: white;
+  }
 }
 
-.close-btn:hover {
-  color: #343a40;
-}
+
 
 .modal-body {
   padding: 20px;
@@ -254,9 +291,10 @@ h2 {
 }
 
 .job-detail-section h4 {
-  margin-bottom: 5px;
-  color: #495057;
+  margin-bottom: 12px;
+  color: var(--primary-color);
   font-size: 16px;
+  font-weight: 600;
 }
 
 .skills-container {

@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { JobService, ApplicationDTO } from '../job.service';
 import { HttpClientModule } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-my-applications',
@@ -10,6 +12,7 @@ import { HttpClientModule } from '@angular/common/http';
   standalone: true,
   imports: [
     CommonModule,
+    RouterModule,
     HttpClientModule
   ]
 })
@@ -19,7 +22,7 @@ export class MyApplicationsComponent implements OnInit {
   error = false;
   selectedApplication: ApplicationDTO | null = null;
 
-  constructor(private jobService: JobService) { }
+  constructor(private jobService: JobService, private router: Router) { }
 
   ngOnInit(): void {
     this.loadMyApplications();
@@ -49,6 +52,10 @@ export class MyApplicationsComponent implements OnInit {
 
   closeApplicationDetails(): void {
     this.selectedApplication = null;
+  }
+
+  navigateToDashboard(): void {
+    this.router.navigate(['/dashboard/job-seeker']);
   }
 
   // Helper method to format skills as an array

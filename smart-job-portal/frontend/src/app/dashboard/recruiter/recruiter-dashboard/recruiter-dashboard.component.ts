@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { JobService, JobResponse } from '../../../services/job.service';
+import { AuthService } from '../../../auth/auth.service';
 
 @Component({
   selector: 'app-recruiter-dashboard',
@@ -15,7 +16,7 @@ export class RecruiterDashboardComponent implements OnInit {
   loading = false;
   error = '';
 
-  constructor(private jobService: JobService) {}
+  constructor(private jobService: JobService, private authService: AuthService) {}
 
   ngOnInit(): void {
     this.loadJobs();
@@ -36,5 +37,9 @@ export class RecruiterDashboardComponent implements OnInit {
         console.error('Error loading jobs:', err);
       }
     });
+  }
+
+  logout(): void {
+    this.authService.logout();
   }
 }

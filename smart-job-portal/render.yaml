@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: smart-job-portal-backend
+    env: docker
+    dockerfilePath: ./backend/Dockerfile
+    region: singapore  # Choose region closest to your users
+    plan: free
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+      - key: SPRING_DATASOURCE_URL
+        sync: false  # This will prompt during deployment for your Aiven MySQL URL
+      - key: SPRING_DATASOURCE_USERNAME
+        sync: false  # Your Aiven MySQL username
+      - key: SPRING_DATASOURCE_PASSWORD
+        sync: false  # Your Aiven MySQL password
+      - key: GEMINI_API_KEY
+        sync: false  # Your Gemini API key
+      - key: JWT_SECRET
+        generateValue: true  # Automatically generates a secure random value
+    buildCommand: cd backend && ./mvnw clean package -DskipTests
+    healthCheckPath: /api/health

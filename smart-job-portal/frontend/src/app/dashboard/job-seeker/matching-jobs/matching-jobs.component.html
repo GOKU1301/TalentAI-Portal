@@ -1,5 +1,5 @@
 <div class="matching-jobs-container">
-  <h2>Jobs Matching Your Skills</h2>
+  <h2><i class="fas fa-briefcase"></i> Jobs Matching Your Skills</h2>
   
   <div *ngIf="isLoading" class="loading-spinner">
     <div class="spinner"></div>
@@ -7,11 +7,13 @@
   </div>
   
   <div *ngIf="error" class="alert alert-danger">
+    <i class="fas fa-exclamation-circle"></i>
     <p>There was an error loading matching jobs. Please try again later.</p>
-    <button class="btn btn-primary" (click)="loadMatchingJobs()">Retry</button>
+    <button class="btn btn-primary" (click)="loadMatchingJobs()"><i class="fas fa-sync"></i> Retry</button>
   </div>
   
   <div *ngIf="!isLoading && !error && matchingJobs.length === 0" class="no-jobs-message">
+    <i class="fas fa-info-circle"></i>
     <p>No matching jobs found. Consider updating your skills to find more job matches.</p>
   </div>
   
@@ -35,7 +37,7 @@
       </div>
       <div class="job-footer">
         <span class="job-date">Posted: {{ formatDate(job.postedDate) }}</span>
-        <button class="btn btn-primary btn-sm">View Details</button>
+        <button class="btn btn-primary btn-sm"><i class="fas fa-eye"></i> View Details</button>
       </div>
     </div>
   </div>
@@ -122,7 +124,9 @@
               class="btn btn-primary" 
               (click)="applyForJob()" 
               [disabled]="isApplying">
-              {{ isApplying ? 'Submitting...' : 'Submit Application' }}
+              <i class="fas fa-paper-plane" *ngIf="!isApplying"></i>
+              <i class="fas fa-spinner fa-spin" *ngIf="isApplying"></i>
+              {{ isApplying ? ' Submitting...' : ' Submit Application' }}
             </button>
           </div>
         </div>

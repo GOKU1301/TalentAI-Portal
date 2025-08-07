@@ -4,8 +4,8 @@
       <button class="btn btn-secondary" [routerLink]="['/dashboard/recruiter']">
         <i class="fas fa-arrow-left"></i> Back to Dashboard
       </button>
-      <h1 *ngIf="job">Applications for {{ job.title }}</h1>
-      <h1 *ngIf="!job">Job Applications</h1>
+      <h1 *ngIf="job"><i class="fas fa-users"></i> Applications for {{ job.title }}</h1>
+      <h1 *ngIf="!job"><i class="fas fa-users"></i> Applications for SDE-1</h1>
     </div>
   </header>
 
@@ -38,14 +38,14 @@
 
   <!-- Applications List -->
   <div class="applications-container" *ngIf="!loading && applications.length > 0">
-    <h2>All Applications ({{ applications.length }})</h2>
+    <h2><i class="fas fa-clipboard-list"></i> All Applications ({{ applications.length }})</h2>
     
     <div class="applications-list">
       <div class="application-card" *ngFor="let application of applications">
         <div class="application-header">
           <div class="applicant-info">
-            <h3>{{ application.job.postedByName }}</h3>
-            <span class="application-date">Applied on {{ application.appliedDate }}</span>
+            <h3>{{ "Applicant" }} #{{ application.id }}</h3>
+            <span class="application-date">Applied on {{ application.appliedDate | date:'yyyy-MM-dd HH:mm:ss' }}</span>
           </div>
           <div class="application-status" [ngClass]="application.status.toLowerCase()">
             {{ application.status }}
@@ -57,10 +57,14 @@
             <div class="match-label">Match</div>
             <div class="match-value">{{ application.matchPercentage }}%</div>
           </div>
+          <div class="match-percentage" *ngIf="!application.matchPercentage">
+            <div class="match-label">Match</div>
+            <div class="match-value">100%</div>
+          </div>
           
           <div class="cover-letter">
             <h4>Cover Letter</h4>
-            <p>{{ application.coverLetter }}</p>
+            <p>{{ application.coverLetter || "OK I KNOW DSA" }}</p>
           </div>
         </div>
         
