@@ -1,0 +1,22 @@
+{
+  "version": 2,
+  "name": "smart-job-portal-frontend",
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist/smart-job-portal-ui/browser"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ],
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist/smart-job-portal-ui/browser",
+  "installCommand": "npm install"
+}

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { environment } from '../../environments/environment';
+import { ConfigService } from './config.service';
 
 export interface JobRequest {
   title: string;
@@ -35,9 +35,14 @@ export interface JobResponse {
   providedIn: 'root'
 })
 export class JobService {
-  private apiUrl = `${environment.apiUrl}/api/jobs`;
+  private get apiUrl(): string {
+    return this.configService.getApiEndpoint('api/jobs');
+  }
 
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+    private configService: ConfigService
+  ) { }
 
   getAllJobs(): Observable<JobResponse[]> {
     return this.http.get<JobResponse[]>(this.apiUrl);
