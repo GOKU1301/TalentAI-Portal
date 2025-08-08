@@ -18,5 +18,5 @@ services:
         sync: false  # Your Gemini API key
       - key: JWT_SECRET
         generateValue: true  # Automatically generates a secure random value
-    buildCommand: cd backend && ./mvnw clean package -DskipTests
+    buildCommand: cd smart-job-portal/backend && ./mvnw clean package -DskipTests
     healthCheckPath: /api/health
