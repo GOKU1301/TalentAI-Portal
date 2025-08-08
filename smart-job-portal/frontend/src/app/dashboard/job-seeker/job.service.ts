@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { AuthService } from '../../auth/auth.service';
+import { ConfigService } from '../../services/config.service';
 
 export interface JobDTO {
   id: number;
@@ -33,12 +34,15 @@ export interface ApplicationDTO {
   providedIn: 'root'
 })
 export class JobService {
-  private apiUrl = 'http://localhost:8080/api';
+  private apiUrl: string;
 
   constructor(
     private http: HttpClient,
-    private authService: AuthService
-  ) { }
+    private authService: AuthService,
+    private configService: ConfigService
+  ) {
+    this.apiUrl = this.configService.getApiEndpoint('api');
+  }
 
   // Get the HTTP options with authorization header
   private getHttpOptions() {

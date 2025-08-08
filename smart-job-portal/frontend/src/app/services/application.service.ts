@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { environment } from '../../environments/environment';
 import { JobResponse } from './job.service';
+import { ConfigService } from './config.service';
 
 export enum ApplicationStatus {
   PENDING = 'PENDING',
@@ -31,9 +31,14 @@ export interface ApplicationResponse {
   providedIn: 'root'
 })
 export class ApplicationService {
-  private apiUrl = `${environment.apiUrl}/api/applications`;
+  private get apiUrl(): string {
+    return this.configService.getApiEndpoint('api/applications');
+  }
 
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+    private configService: ConfigService
+  ) { }
 
   applyForJob(jobId: number, request: ApplicationRequest): Observable<ApplicationResponse> {
     return this.http.post<ApplicationResponse>(`${this.apiUrl}/apply/${jobId}`, request);

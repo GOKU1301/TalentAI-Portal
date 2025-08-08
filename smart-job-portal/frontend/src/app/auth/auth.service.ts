@@ -4,6 +4,7 @@ import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { Router } from '@angular/router';
 import { isPlatformBrowser } from '@angular/common';
 import { PLATFORM_ID } from '@angular/core';
+import { ConfigService } from '../services/config.service';
 
 export interface User {
   id?: number;
@@ -30,13 +31,19 @@ export interface RegisterRequest {
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:8080/api';
+  private apiUrl: string;
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
   private platformId = inject(PLATFORM_ID);
   private isBrowser = isPlatformBrowser(this.platformId);
 
-  constructor(private http: HttpClient, private router: Router) { 
+  constructor(
+    private http: HttpClient, 
+    private router: Router,
+    private configService: ConfigService
+  ) {
+    this.apiUrl = this.configService.getApiEndpoint('api'); 
+    
     // Check if user is already logged in from localStorage
     if (this.isBrowser) {
       const storedUser = localStorage.getItem('currentUser');
