@@ -1,22 +1,20 @@
 FROM eclipse-temurin:17-jdk-alpine as build
 WORKDIR /workspace/app
 
-# Copy maven executable and pom.xml from backend directory
-COPY smart-job-portal/backend/mvnw .
-COPY smart-job-portal/backend/.mvn .mvn
+# Install Maven
+RUN apk add --no-cache maven
+
+# Copy pom.xml from backend directory
 COPY smart-job-portal/backend/pom.xml .
 
-# Make mvnw executable
-RUN chmod +x ./mvnw
-
 # Build all dependencies but exclude the actual application to leverage Docker cache
-RUN ./mvnw dependency:go-offline -B
+RUN mvn dependency:go-offline -B
 
 # Copy source code from backend directory
 COPY smart-job-portal/backend/src src
 
 # Package the application
-RUN ./mvnw package -DskipTests
+RUN mvn package -DskipTests
 RUN mkdir -p target/dependency && (cd target/dependency; jar -xf ../*.jar)
 
 # Runtime stage
