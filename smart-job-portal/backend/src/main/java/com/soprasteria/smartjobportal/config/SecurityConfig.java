@@ -35,7 +35,7 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final UserDetailsService userDetailsService;
     
-    @Value("${spring.web.cors.allowed-origins:http://localhost:4200}")
+    @Value("${spring.web.cors.allowed-origins:http://localhost:4200,https://talent-ai-portal.vercel.app}")
     private String allowedOrigins;
 
     @Bean

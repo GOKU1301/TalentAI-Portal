@@ -31,7 +31,7 @@ jwt.secret=${JWT_SECRET}
 jwt.expiration=86400000
 
 # CORS Configuration
-spring.web.cors.allowed-origins=${ALLOWED_ORIGINS:http://localhost:4200}
+spring.web.cors.allowed-origins=${ALLOWED_ORIGINS:http://localhost:4200,https://talent-ai-portal.vercel.app}
 
 # Gemini API Configuration
 gemini.api.key=${GEMINI_API_KEY}
